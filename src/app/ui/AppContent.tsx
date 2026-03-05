@@ -15,7 +15,14 @@ export default function AppContent() {
             </View>
 
             <View style={AppContentStyle.pageWidget}>
-                <Text style={AppContentStyle.text}>Hellow, World!</Text>
+                <View style={AppContentStyle.preloaderContainer}>
+                    {Array.from({ length: 9 }).map((_, idx) => (
+                        <View key={idx} style={AppContentStyle.preloaderItem}>
+                            <View style={AppContentStyle.preloaderSquare} />
+                            <Text style={AppContentStyle.preloaderText}>***** *****</Text>
+                        </View>
+                    ))}
+                </View>
             </View>
             
             <View style={AppContentStyle.bottomBar}> 

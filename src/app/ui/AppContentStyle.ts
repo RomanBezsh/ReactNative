@@ -53,6 +53,29 @@ const AppContentStyle = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+    },
+    preloaderContainer: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-around",
+        width: "100%",
+        padding: 10,
+    },
+    preloaderItem: {
+        width: "30%",
+        marginVertical: 10,
+        alignItems: "center",
+    },
+    preloaderSquare: {
+        backgroundColor: "rgba(0,0,0,0.1)",
+        width: 80,
+        height: 80,
+        borderRadius: 4,
+    },
+    preloaderText: {
+        marginTop: 6,
+        color: "rgba(0,0,0,0.3)",
+        fontSize: 12,
     }
 });
 
