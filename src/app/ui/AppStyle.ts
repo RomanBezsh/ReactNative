@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native"
-import  Colors  from "../../features/config/Colors";
+import Colors from "../../features/config/Colors";
 
 const AppStyle = StyleSheet.create({
     safeArea: {
