@@ -74,7 +74,7 @@ const AppContentStyle = StyleSheet.create({
     },
     preloaderText: {
         marginTop: 6,
-        color: "rgba(0,0,0,0.3)",
+        color: "#fff",
         fontSize: 12,
     }
 });

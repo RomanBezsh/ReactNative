@@ -19,7 +19,7 @@ export default function AppContent() {
                     {Array.from({ length: 9 }).map((_, idx) => (
                         <View key={idx} style={AppContentStyle.preloaderItem}>
                             <View style={AppContentStyle.preloaderSquare} />
-                            <Text style={AppContentStyle.preloaderText}>***** *****</Text>
+                            <Text style={AppContentStyle.preloaderText}>######</Text>
                         </View>
                     ))}
                 </View>
