@@ -31,7 +31,6 @@ const AppContentStyle = StyleSheet.create({
         alignItems: "center",
     },
     topBarIcon: {
-        backgroundColor: "#bbb",
         height: 42.0,
         marginHorizontal: 10.0,
         width: 42.0,
@@ -54,6 +53,12 @@ const AppContentStyle = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
+    topBarBack: {
+        fontSize: 42.0,
+        color: Colors.primaryTextColor,
+        marginLeft: 10.0,
+        marginTop: -8.0,
+    }
 });
 
 export default AppContentStyle;
