@@ -5,14 +5,14 @@ const CalcButtonStyle = StyleSheet.create({
         backgroundColor: "#2C333E",
         borderRadius: 5.0,
         flex: 1,
-        justifyContent: "center", // display: "flex" в RN по дефолту, можно убрать
+        justifyContent: "center", 
         alignItems: "center",
     },
     digitContainer: {
         backgroundColor: "#353A4E",
     },
     funcContainer: {
-        backgroundColor: "#212630", // Добавил нормальный цвет вместо "#"
+        backgroundColor: "#212630", 
     },
     equalContainer: {
         backgroundColor: "#578de5",
