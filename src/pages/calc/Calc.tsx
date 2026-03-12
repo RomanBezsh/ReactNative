@@ -8,37 +8,81 @@ import React, { useState } from "react";
 
 
 const maxDigits: number = 20;
-const SHORT_SPACE = '\u202F'; 
+const minusSymbol = '\u2212';
+const SHORT_SPACE = '\u202F';
+const floatSymbol = ',';
+
+interface ICaclState {
+    expression: string,
+    result: string,
+    isNeedClear: boolean
+};
+
+const initCalcState: ICaclState = {
+    expression: "",
+    result: "0",
+    isNeedClear: true
+};
 
 export default function Home() {
-    const [expression, setExpression] = useState<string>("");
-    const [result, setResult] = useState<string>("0");
+    const [calcState, setCalcState] = useState<ICaclState>(initCalcState);
+    // const [expression, setExpression] = useState<string>("");
+    // const [result, setResult] = useState<string>("0");
+    // const [needClear, setNeedClear] = useState<boolean>(true);
 
-    const [floatSymbol, setFloatSymbol] = useState<string>("");
     const [memory, setMemory] = useState<number>(0);
 
     const countDigits = (numStr: string): number => {
         return numStr.replace(/[\s\.\ \-]/g, '').length;
     };
 
+
+    const resToNum = (res: string): number => {
+        console.log(res, res.split(SHORT_SPACE).join('').replace(minusSymbol, '-').replace(floatSymbol, '.'))
+        return Number(res.split(SHORT_SPACE).join('')
+            .replace(minusSymbol, '-')
+            .replace(floatSymbol, '.')
+        )
+    }
+
+    const numToRes = (num: number): string => {
+        console.log(num)
+        return num.toString()
+            .replace('.', floatSymbol)
+            .replace('-', minusSymbol);
+    }
+
+    const invClick = () => {
+        if (calcState.result != '0') {
+            const num = 1 / resToNum(calcState.result);
+            setCalcState({
+                ...calcState,
+                result: numToRes(num),
+                expression: `1 / ${calcState.result}`,
+                isNeedClear: true
+            })
+        }
+    };
+
+
     const formatNumberWithSpaces = (numStr: string): string => {
-        const cleanNum = numStr.replace(/\s/g, '').replace(/\u202F/g, ''); 
-        
+        const cleanNum = numStr.replace(/\s/g, '').replace(/\u202F/g, '');
+
         const parts = cleanNum.split('.');
         let integerPart = parts[0];
         const decimalPart = parts[1];
-        
+
         let sign = '';
         if (integerPart.startsWith('-')) {
             sign = '-';
             integerPart = integerPart.substring(1);
         }
-        
+
         integerPart = integerPart.replace(/^0+(?=\d)/, '');
         if (integerPart === '') {
             integerPart = '0';
         }
-        
+
         let formattedInteger = '';
         for (let i = integerPart.length - 1; i >= 0; i--) {
             if ((integerPart.length - 1 - i) > 0 && (integerPart.length - 1 - i) % 3 === 0) {
@@ -46,60 +90,74 @@ export default function Home() {
             }
             formattedInteger = integerPart[i] + formattedInteger;
         }
-        
+
         let result = sign + formattedInteger;
         if (decimalPart !== undefined) {
             result += '.' + decimalPart;
         }
-        
+
         return result;
     };
 
     const digitClick = (text: string) => {
-        let res = result.replace(/\u202F/g, ''); 
+        let res = calcState.result.replace(/\u202F/g, '');
 
-        if (result === '0') {
+        if (calcState.result === '0') {
             res = '';
+            setCalcState({
+                ...calcState,
+                isNeedClear: false
+            })
         }
-        
+
         const digitCount = countDigits(res + text);
-        
+
         if (digitCount <= maxDigits) {
             res += text;
         }
 
         res = formatNumberWithSpaces(res);
-        setResult(res);
+        setCalcState({
+            ...calcState,
+            result: res
+        })
     };
 
     const clearResultClick = () => {
-        setResult('0');
-        setFloatSymbol("");
+        setCalcState({
+            ...calcState,
+            result: '0'
+        })
     };
 
     const backSpaceClick = () => {
-        const cleanRes = result.replace(/\u202F/g, ''); 
+        const cleanRes = calcState.result.replace(/\u202F/g, '');
         const len: number = cleanRes.length;
-        let res = (len > 1)? cleanRes.slice(0, -1) : "0";
-        
+        let res = (len > 1) ? cleanRes.slice(0, -1) : "0";
+
         res = formatNumberWithSpaces(res);
-        setResult(res);
+        setCalcState({
+            ...calcState,
+            result: res
+        })
     }
 
     const dotClick = (text: string) => {
-        setFloatSymbol(text);
-        if (!(result.includes(text))) {
-            let res = result.replace(/\u202F/g, '') + text; 
+        if (!(calcState.result.includes(text))) {
+            let res = calcState.result.replace(/\u202F/g, '') + text;
             res = formatNumberWithSpaces(res);
-            setResult(res);
+            setCalcState({
+                ...calcState,
+                result: res
+            })
         }
     }
 
     const pmClick = () => {
-        const cleanRes = result.replace(/\u202F/g, ''); 
-        
-        if (cleanRes.charAt(0) == '0')  return;
-        
+        const cleanRes = calcState.result.replace(/\u202F/g, '');
+
+        if (cleanRes.charAt(0) == '0') return;
+
         let res = "";
         if (cleanRes.charAt(0) != '-' && cleanRes.length != 0) {
             res = "-" + cleanRes;
@@ -107,9 +165,12 @@ export default function Home() {
         else {
             res = cleanRes.slice(1);
         }
-        
+
         res = formatNumberWithSpaces(res);
-        setResult(res);
+        setCalcState({
+            ...calcState,
+            result: res
+        })
     }
 
     const mcClick = () => {
@@ -118,113 +179,128 @@ export default function Home() {
 
     const mrClick = () => {
         let formattedMemory = formatNumberWithSpaces(memory.toString());
-        setResult(formattedMemory);
+        setCalcState({
+            ...calcState,
+            result: formattedMemory
+        })
     };
 
     const mpClick = () => {
-        const cleanRes = result.replace(/\u202F/g, ''); 
+        const cleanRes = calcState.result.replace(/\u202F/g, '');
         setMemory(memory + parseFloat(cleanRes));
-        setResult("0");
+        setCalcState({
+            ...calcState,
+            result: "0"
+        })
     };
 
     const mmClick = () => {
-        const cleanRes = result.replace(/\u202F/g, ''); ъ
+        const cleanRes = calcState.result.replace(/\u202F/g, '');
         setMemory(memory - parseFloat(cleanRes));
-        setResult("0");
+        setCalcState({
+            ...calcState,
+            result: "0"
+        })
     };
 
     const msClick = () => {
-        const cleanRes = result.replace(/\u202F/g, ''); /
+        const cleanRes = calcState.result.replace(/\u202F/g, '');
         setMemory(parseFloat(cleanRes));
-        setResult("0");
+        setCalcState({
+            ...calcState,
+            result: "0"
+        })
     };
 
     const mvClick = () => {
         let formattedMemory = formatNumberWithSpaces(memory.toString());
-        setResult(formattedMemory);
+        setCalcState({
+            ...calcState,
+            result: formattedMemory
+        });
     };
 
-    const resultDigitCount = countDigits(result);
+    const resultDigitCount = countDigits(calcState.result);
     const resultFontSize = resultDigitCount <= 11 ? 60.0 : 660.0 / resultDigitCount;
 
     return (
         <View style={CalcStyle.pageContainer}>
             <Text style={CalcStyle.pageTitle}>Calculator</Text>
-            <Text style={CalcStyle.expression}>{expression}</Text>
-            <Text style={[CalcStyle.result, {fontSize: resultFontSize}]}>{result}</Text>
+            <Text style={CalcStyle.expression}>{calcState.expression}</Text>
+            <Text style={[CalcStyle.result, { fontSize: resultFontSize }]}>{calcState.result}</Text>
             <View style={CalcStyle.memoryRow}>
-                <MemoryButton 
-                    buttonType={MemoryButtonTypes.MC} 
+                <MemoryButton
+                    buttonType={MemoryButtonTypes.MC}
                     state={memory === 0 ? MemoryButtonStates.disabled : MemoryButtonStates.enabled}
-                    text="MC" 
+                    text="MC"
                     onPress={mcClick}
                 />
-                <MemoryButton 
-                    buttonType={MemoryButtonTypes.MR} 
+                <MemoryButton
+                    buttonType={MemoryButtonTypes.MR}
                     state={memory === 0 ? MemoryButtonStates.disabled : MemoryButtonStates.enabled}
-                    text="MR" 
+                    text="MR"
                     onPress={mrClick}
                 />
-                <MemoryButton 
-                    buttonType={MemoryButtonTypes.MP} 
+                <MemoryButton
+                    buttonType={MemoryButtonTypes.MP}
                     state={MemoryButtonStates.enabled}
-                    text="M+" 
+                    text="M+"
                     onPress={mpClick}
                 />
-                <MemoryButton 
-                    buttonType={MemoryButtonTypes.MM} 
+                <MemoryButton
+                    buttonType={MemoryButtonTypes.MM}
                     state={MemoryButtonStates.enabled}
-                    text="M-" 
+                    text="M-"
                     onPress={mmClick}
                 />
-                <MemoryButton 
-                    buttonType={MemoryButtonTypes.MS} 
+                <MemoryButton
+                    buttonType={MemoryButtonTypes.MS}
                     state={MemoryButtonStates.enabled}
-                    text="MS" 
+                    text="MS"
                     onPress={msClick}
                 />
-                <MemoryButton 
-                    buttonType={MemoryButtonTypes.MV} 
+                <MemoryButton
+                    buttonType={MemoryButtonTypes.MV}
                     state={memory === 0 ? MemoryButtonStates.disabled : MemoryButtonStates.enabled}
-                    text="Mv" 
+                    text="Mv"
                     onPress={mvClick}
                 />
             </View>
             <View style={CalcStyle.keyboard}>
                 <View style={CalcStyle.buttonsRow}>
-                    <CalcButton text="%" buttonType={CalcButtonTypes.func} onPress={() => console.log("Press")}/>
+                    <CalcButton text="%" buttonType={CalcButtonTypes.func} onPress={() => console.log("Press")} />
                     <CalcButton text="CE" buttonType={CalcButtonTypes.func} />
-                    <CalcButton text="C" buttonType={CalcButtonTypes.func} onPress={() => {clearResultClick()}}/>
-                    <CalcButton text="⌫" buttonType={CalcButtonTypes.func} onPress={() => {backSpaceClick()}}/>
+                    <CalcButton text="C" buttonType={CalcButtonTypes.func} onPress={() => { clearResultClick() }} />
+                    <CalcButton text="⌫" buttonType={CalcButtonTypes.func} onPress={() => { backSpaceClick() }} />
                 </View>
                 <View style={CalcStyle.buttonsRow}>
-                    <CalcButton text={"\u00b9/\u2093"} buttonType={CalcButtonTypes.func}/>
-                    <CalcButton text={"x\u00b2"} buttonType={CalcButtonTypes.func}/>
-                    <CalcButton text={"\u221ax\u0305"} buttonType={CalcButtonTypes.func}/>
-                    <CalcButton text={"\u00F7"} buttonType={CalcButtonTypes.func}/>
+                    <CalcButton text={"\u00b9/\u2093"} buttonType={CalcButtonTypes.func} onPress={invClick} />
+                    <CalcButton text={"x\u00b2"} buttonType={CalcButtonTypes.func} />
+                    <CalcButton text={"\u221ax\u0305"} buttonType={CalcButtonTypes.func} />
+                    <CalcButton text={"\u00F7"} buttonType={CalcButtonTypes.func} />
                 </View>
                 <View style={CalcStyle.buttonsRow}>
-                    <CalcButton text="7" buttonType={CalcButtonTypes.digit} onPress={digitClick}/>
-                    <CalcButton text="8" buttonType={CalcButtonTypes.digit} onPress={digitClick}/>
-                    <CalcButton text="9" buttonType={CalcButtonTypes.digit} onPress={digitClick}/>
+                    <CalcButton text="7" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                    <CalcButton text="8" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                    <CalcButton text="9" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
                     <CalcButton text={"\u00D7"} buttonType={CalcButtonTypes.func} />
                 </View>
                 <View style={CalcStyle.buttonsRow}>
-                    <CalcButton text="4" buttonType={CalcButtonTypes.digit} onPress={digitClick}/>
-                    <CalcButton text="5" buttonType={CalcButtonTypes.digit} onPress={digitClick}/>
-                    <CalcButton text="6" buttonType={CalcButtonTypes.digit} onPress={digitClick}/>
-                    <CalcButton text={"\u2212"} buttonType={CalcButtonTypes.func} />
+                    <CalcButton text="4" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                    <CalcButton text="5" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                    <CalcButton text="6" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                    <CalcButton text={minusSymbol} buttonType={CalcButtonTypes.func} />
                 </View>
                 <View style={CalcStyle.buttonsRow}>
-                    <CalcButton text="1" buttonType={CalcButtonTypes.digit} onPress={digitClick}/>
-                    <CalcButton text="2" buttonType={CalcButtonTypes.digit} onPress={digitClick}/>
-                    <CalcButton text="3" buttonType={CalcButtonTypes.digit} onPress={digitClick}/>
+                    <CalcButton text="1" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                    <CalcButton text="2" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                    <CalcButton text="3" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
                     <CalcButton text={"\u002B"} buttonType={CalcButtonTypes.func} />
                 </View>
                 <View style={CalcStyle.buttonsRow}>
-                    <CalcButton text={"\u00B1"} buttonType={CalcButtonTypes.digit} onPress={pmClick}/>
-                    <CalcButton text="0" buttonType={CalcButtonTypes.digit} onPress={digitClick}/>
-                    <CalcButton text="." buttonType={CalcButtonTypes.digit} onPress={dotClick}/>
+                    <CalcButton text={"\u00B1"} buttonType={CalcButtonTypes.digit} onPress={pmClick} />
+                    <CalcButton text="0" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                    <CalcButton text={floatSymbol} buttonType={CalcButtonTypes.digit} onPress={dotClick} />
                     <CalcButton text={"\uFF1D"} buttonType={CalcButtonTypes.equal} />
                 </View>
             </View>
