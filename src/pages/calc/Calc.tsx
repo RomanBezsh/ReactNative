@@ -5,6 +5,7 @@ import { CalcButtonTypes } from "./model/CalcButtonTypes";
 import MemoryButton from "./ui/MemoryButton";
 import { MemoryButtonTypes, MemoryButtonStates } from "./model/MemoryButtonTypes";
 import React, { useState } from "react";
+import { CalcOperations } from "./model/CalcOperations";
 
 
 const maxDigits: number = 20;
@@ -15,22 +16,48 @@ const floatSymbol = ',';
 interface ICaclState {
     expression: string,
     result: string,
-    isNeedClear: boolean
+    isNeedClear: boolean,
+    operation?: CalcOperations,
+    prevArgument?: number,
+    isNeedClearEntry: boolean,
 };
 
 const initCalcState: ICaclState = {
     expression: "",
     result: "0",
-    isNeedClear: true
+    isNeedClear: true,
+    isNeedClearEntry: false
 };
 
 export default function Home() {
     const [calcState, setCalcState] = useState<ICaclState>(initCalcState);
-    // const [expression, setExpression] = useState<string>("");
-    // const [result, setResult] = useState<string>("0");
-    // const [needClear, setNeedClear] = useState<boolean>(true);
-
     const [memory, setMemory] = useState<number>(0);
+
+    const equalClick = () => {
+        if(!calcState.operation) return;
+        const operations = {
+            "add": numToRes(calcState.prevArgument! + resToNum(calcState.result)),
+            "sub": numToRes(calcState.prevArgument! - resToNum(calcState.result)),
+            "mul": numToRes(calcState.prevArgument! * resToNum(calcState.result)),
+            "div": numToRes(calcState.prevArgument! / resToNum(calcState.result)),
+        };
+        setCalcState({...calcState,
+            result: operations[calcState.operation],
+            expression: `${calcState.expression} ${calcState.result} =`,
+            operation: undefined,
+            prevArgument: undefined,
+            isNeedClear: true
+        });
+    };
+
+    const operButtonClick = (oper: CalcOperations, symbol: string) => {
+        setCalcState({...calcState, 
+            operation: oper,
+            expression: `${calcState.result} ${symbol}`,
+            prevArgument: resToNum(calcState.result),
+            isNeedClearEntry: true
+        })
+    };
 
     const countDigits = (numStr: string): number => {
         return numStr.replace(/[\s\.\ \-]/g, '').length;
@@ -93,7 +120,7 @@ export default function Home() {
 
         let result = sign + formattedInteger;
         if (decimalPart !== undefined) {
-            result += '.' + decimalPart;
+            result += floatSymbol + decimalPart;
         }
 
         return result;
@@ -119,7 +146,10 @@ export default function Home() {
         res = formatNumberWithSpaces(res);
         setCalcState({
             ...calcState,
-            result: res
+            result: res,
+            expression: calcState.isNeedClear? "" : calcState.expression,
+            isNeedClear: false,
+            isNeedClearEntry: false
         })
     };
 
@@ -277,31 +307,31 @@ export default function Home() {
                     <CalcButton text={"\u00b9/\u2093"} buttonType={CalcButtonTypes.func} onPress={invClick} />
                     <CalcButton text={"x\u00b2"} buttonType={CalcButtonTypes.func} />
                     <CalcButton text={"\u221ax\u0305"} buttonType={CalcButtonTypes.func} />
-                    <CalcButton text={"\u00F7"} buttonType={CalcButtonTypes.func} />
+                    <CalcButton text={"\u00F7"} buttonType={CalcButtonTypes.func} onPress={(face) => operButtonClick(CalcOperations.div, face)}/>
                 </View>
                 <View style={CalcStyle.buttonsRow}>
                     <CalcButton text="7" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
                     <CalcButton text="8" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
                     <CalcButton text="9" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
-                    <CalcButton text={"\u00D7"} buttonType={CalcButtonTypes.func} />
+                    <CalcButton text={"\u00D7"} buttonType={CalcButtonTypes.func} onPress={(face) => operButtonClick(CalcOperations.mul, face)}/>
                 </View>
                 <View style={CalcStyle.buttonsRow}>
                     <CalcButton text="4" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
                     <CalcButton text="5" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
                     <CalcButton text="6" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
-                    <CalcButton text={minusSymbol} buttonType={CalcButtonTypes.func} />
+                    <CalcButton text={minusSymbol} buttonType={CalcButtonTypes.func} onPress={(face) => operButtonClick(CalcOperations.sub, face)}/>
                 </View>
                 <View style={CalcStyle.buttonsRow}>
                     <CalcButton text="1" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
                     <CalcButton text="2" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
                     <CalcButton text="3" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
-                    <CalcButton text={"\u002B"} buttonType={CalcButtonTypes.func} />
+                    <CalcButton text={"\uFF0B"} buttonType={CalcButtonTypes.func} onPress={(face) => operButtonClick(CalcOperations.add, face)}/>
                 </View>
                 <View style={CalcStyle.buttonsRow}>
                     <CalcButton text={"\u00B1"} buttonType={CalcButtonTypes.digit} onPress={pmClick} />
                     <CalcButton text="0" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
                     <CalcButton text={floatSymbol} buttonType={CalcButtonTypes.digit} onPress={dotClick} />
-                    <CalcButton text={"\uFF1D"} buttonType={CalcButtonTypes.equal} />
+                    <CalcButton text={"\uFF1D"} buttonType={CalcButtonTypes.equal} onPress={equalClick} />
                 </View>
             </View>
         </View>
