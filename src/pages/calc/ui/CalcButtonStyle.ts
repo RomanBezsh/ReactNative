@@ -19,6 +19,7 @@ const CalcButtonStyle = StyleSheet.create({
     },
     text: {
         color: "#D3DBE2",
+        fontSize: 18.0,
     },
     digitText: {
         color: "#D3DBE2",

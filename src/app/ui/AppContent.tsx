@@ -1,4 +1,4 @@
-import { BackHandler, Image, Text, TouchableOpacity, View } from "react-native";
+import { BackHandler, Image, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import AppContentStyle from "./AppContentStyle";
 import Card from "./Card";
 import CardStyle from "./CardStyle";
@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import IRoute from "../../features/model/IRoute";
 import Calc from "../../pages/calc/Calc";
 import NotFounded from "../../pages/404/NotFounded";
+import React from "react";
 
 
 const startPage: IRoute = {
@@ -16,7 +17,8 @@ const startPage: IRoute = {
 export default function AppContent() {
     const [history, setHistory] = useState<Array<IRoute>>([]);
     const [page, setPage] = useState<IRoute>(startPage);
-
+    const { width, height } = useWindowDimensions();
+    
     const navigate = (route: IRoute): void => {
         if (route.slug == "-1") {
             console.log("history.length: " + history.length);
@@ -49,7 +51,7 @@ export default function AppContent() {
 
     return (
         <View style={AppContentStyle.container}>
-            <View style={AppContentStyle.topBar}>
+            {width < height && <View style={AppContentStyle.topBar}>
                 <View style={AppContentStyle.topBarIcon}>
                     <Text style={AppContentStyle.topBarBack}>
                         {"<"}
@@ -57,7 +59,7 @@ export default function AppContent() {
                 </View>
                 <Text style={AppContentStyle.topBarTitle}>Mobile-P33</Text>
                 <View style={AppContentStyle.topBarIcon}></View>
-            </View>
+            </View>}
 
             <View style={AppContentStyle.pageWidget}>
                 {page.slug == "home" ? <Home />
@@ -66,15 +68,8 @@ export default function AppContent() {
                 }
             </View>
 
-            {/* <View style={AppContentStyle.pageWidget}>
-                <View style={CardStyle.preloaderContainer}>
-                    {Array.from({ length: 12 }).map((_, idx) => (
-                        <Card key={idx}/>
-                    ))}
-                </View>
-            </View> */}
-
-            <View style={AppContentStyle.bottomBar}>
+            
+            {width < height && <View style={AppContentStyle.bottomBar}>
                 <TouchableOpacity onPress={() => navigate({ slug: "home" })}>
                     <Image style={AppContentStyle.bottomBarIcon}
                         source={require("../asset/home.png")}></Image>
@@ -91,7 +86,7 @@ export default function AppContent() {
                 </TouchableOpacity>
 
                 
-            </View>
+            </View>}
         </View>
     );
 }

@@ -4,6 +4,7 @@ import {
     SafeAreaView,
 } from 'react-native-safe-area-context';
 import AppContent from "./ui/AppContent";
+import React from 'react';
 
 export default function App() {
 

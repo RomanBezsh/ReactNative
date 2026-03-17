@@ -33,7 +33,7 @@ const CalcStyle = StyleSheet.create({
         textAlign: "right",
         marginRight: 10.0,
         marginVertical: 10.0,
-    }, 
+    },
     keyboard: {
         flex: 1,
         display: "flex",
@@ -48,7 +48,30 @@ const CalcStyle = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "flex-end",
         paddingVertical: 5.0,
-    }
+    },
+    displayLand: {
+        flex: 1,
+        
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
+    keyboardLand: {
+        flex: 3,
+    },
+    displayLeftLand: {
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+    },
+    resultLand: {
+        flex: 1,
+        backgroundColor: "#282828",
+        color: "#F7FFFF",
+        textAlign: "right",
+        marginRight: 10.0,
+    },
 });
 
 

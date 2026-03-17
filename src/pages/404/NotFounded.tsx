@@ -7,7 +7,7 @@ export default function NotFounded() {
 
     return (
         <View>
-            <Image source={require("../../app/asset/404.png")} />
+            <Image style={NotFoundedStyle.image} source={require("../../app/asset/404.png")} />
         </View>
     );
 }
@@ -18,5 +18,9 @@ const NotFoundedStyle = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+    },
+    image: {
+        width: 200,
+        height: 200,
     }
 });
