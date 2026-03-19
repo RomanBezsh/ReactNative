@@ -19,6 +19,10 @@ export default function Rate() {
         NbuRateApi.getCurrentRates().then(setRates);
     }, [])
 
+    useEffect(() => {
+        NbuRateApi.getRatesByDate(date).then(setRates);
+    }, [date])
+
     return (
         <View style={HomeStyle.pageContainer}>
             <Text style={HomeStyle.pageTitle}>Курси валют НБУ</Text>
@@ -48,16 +52,24 @@ export default function Rate() {
 const Table = ({ data }: { data: Array<INbuRate> }) => {
     return (
         <ScrollView style={styles.table}>
-            <View style={styles.row}>
-                <Text style={styles.col}>CC</Text>
-                <Text style={styles.col}>Text</Text>
-                <Text style={styles.col}>Rate</Text>
+            <View style={[styles.row, styles.headerRow]}>
+                <Text style={styles.headerCell}>CC</Text>
+                <Text style={styles.headerCell}>Назва</Text>
+                <Text style={styles.headerCell}>Курс</Text>
             </View>
-            {data.map(rate => <View style={styles.row}>
-                <Text style={styles.cell}>{rate.cc}</Text>
-                <Text style={styles.cell}>{rate.txt}</Text>
-                <Text style={styles.cell}>{rate.rate}</Text>
-            </View>)}
+            {data.map((rate, index) => (
+                <View
+                    key={rate.cc}
+                    style={[
+                        styles.row,
+                        index % 2 === 0 ? styles.evenRow : styles.oddRow,
+                    ]}
+                >
+                    <Text style={styles.cell}>{rate.cc}</Text>
+                    <Text style={styles.cell}>{rate.txt}</Text>
+                    <Text style={styles.cell}>{rate.rate}</Text>
+                </View>
+            ))}
         </ScrollView>
     );
 };
@@ -65,37 +77,47 @@ const Table = ({ data }: { data: Array<INbuRate> }) => {
 const styles = StyleSheet.create({
     table: {
         borderWidth: 1,
-        borderColor: "black",
+        borderColor: "#ccc",
         marginBottom: 10,
         marginTop: 30,
-    },
-    col: {
-        flex: 1,
-        padding: 10,
-        borderWidth: 1,
-        textAlign: "center",
-        fontSize: 14,
-        fontWeight: "500",
-        backgroundColor: "#503f3fff",
-        color: "#FFFFFF",
-        borderColor: "black",
+        borderRadius: 6,
+        overflow: "hidden",
     },
     row: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        height: 40.0,
-        backgroundColor: "#fff",
+        minHeight: 45,
+    },
+    headerRow: {
+        backgroundColor: "#503f3f",
+    },
+    headerCell: {
+        flex: 1,
+        paddingVertical: 10,
+        paddingHorizontal: 5,
+        borderRightWidth: 1,
+        borderColor: "#ccc",
+        textAlign: "center",
+        fontSize: 14,
+        fontWeight: "600",
+        color: "#fff",
     },
     cell: {
         flex: 1,
-        padding: 10,
-        borderWidth: 1,
-        //textAlign: "center",
-        fontSize: 12,
-        fontWeight: "500",
-        color: "black",
-        borderColor: "black",
+        paddingVertical: 8,
+        paddingHorizontal: 5,
+        borderRightWidth: 1,
+        borderColor: "#eee",
+        textAlign: "center",
+        fontSize: 13,
+        color: "#333",
+    },
+    evenRow: {
+        backgroundColor: "#f9f9f9",
+    },
+    oddRow: {
+        backgroundColor: "#fff",
     },
 });
 

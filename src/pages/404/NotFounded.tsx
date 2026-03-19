@@ -7,7 +7,7 @@ export default function NotFounded() {
 
     return (
         <View>
-            <Image style={NotFoundedStyle.image} source={require("../../app/asset/404.png")} />
+            <Image style={NotFoundedStyle.image} source={require("../../features/asset/404.png")} />
         </View>
     );
 }

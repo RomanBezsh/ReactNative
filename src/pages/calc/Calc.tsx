@@ -41,6 +41,7 @@ export default function Home() {
             "sub": numToRes(calcState.prevArgument! - resToNum(calcState.result)),
             "mul": numToRes(calcState.prevArgument! * resToNum(calcState.result)),
             "div": numToRes(calcState.prevArgument! / resToNum(calcState.result)),
+            "percent": numToRes(calcState.prevArgument! * (resToNum(calcState.result) / 100)),
         };
         setCalcState({
             ...calcState,
@@ -92,6 +93,114 @@ export default function Home() {
                 isNeedClear: true
             })
         }
+    };
+
+    const sqrClick = () => {
+        const num = resToNum(calcState.result);
+        const squared = num * num;
+        setCalcState({
+            ...calcState,
+            result: numToRes(squared),
+            expression: `sqr(${calcState.result})`,
+            isNeedClear: true
+        });
+    };
+
+    const sqrtClick = () => {
+        const num = resToNum(calcState.result);
+        if (num < 0) {
+            setCalcState({
+                ...calcState,
+                result: "Error",
+                expression: `sqrt(${calcState.result}) - negative number`,
+                isNeedClear: true
+            });
+        } else {
+            const sqrt = Math.sqrt(num);
+            setCalcState({
+                ...calcState,
+                result: numToRes(sqrt),
+                expression: `sqrt(${calcState.result})`,
+                isNeedClear: true
+            });
+        }
+    };
+
+    const sinClick = () => {
+        const num = resToNum(calcState.result);
+        const sin = Math.sin(num);
+        setCalcState({
+            ...calcState,
+            result: numToRes(sin),
+            expression: `sin(${calcState.result})`,
+            isNeedClear: true
+        });
+    };
+
+    const cosClick = () => {
+        const num = resToNum(calcState.result);
+        const cos = Math.cos(num);
+        setCalcState({
+            ...calcState,
+            result: numToRes(cos),
+            expression: `cos(${calcState.result})`,
+            isNeedClear: true
+        });
+    };
+
+    const tanClick = () => {
+        const num = resToNum(calcState.result);
+        // Проверка на неопределенность: tan(x) не определен при x = π/2 + kπ
+        const normalized = num % Math.PI;
+        if (Math.abs(normalized - Math.PI / 2) < 1e-10 || Math.abs(normalized + Math.PI / 2) < 1e-10) {
+            setCalcState({
+                ...calcState,
+                result: "Error",
+                expression: `tan(${calcState.result}) - undefined`,
+                isNeedClear: true
+            });
+        } else {
+            const tan = Math.tan(num);
+            setCalcState({
+                ...calcState,
+                result: numToRes(tan),
+                expression: `tan(${calcState.result})`,
+                isNeedClear: true
+            });
+        }
+    };
+
+    const ctgClick = () => {
+        const num = resToNum(calcState.result);
+        // Проверка на неопределенность: ctg(x) не определен при x = kπ
+        const normalized = num % Math.PI;
+        if (Math.abs(normalized) < 1e-10 || Math.abs(normalized - Math.PI) < 1e-10) {
+            setCalcState({
+                ...calcState,
+                result: "Error",
+                expression: `ctg(${calcState.result}) - undefined`,
+                isNeedClear: true
+            });
+        } else {
+            const ctg = 1 / Math.tan(num);
+            setCalcState({
+                ...calcState,
+                result: numToRes(ctg),
+                expression: `ctg(${calcState.result})`,
+                isNeedClear: true
+            });
+        }
+    };
+
+    const percentClick = () => {
+        // Устанавливаем операцию percent для последующего вычисления с "="
+        setCalcState({
+            ...calcState,
+            operation: CalcOperations.percent,
+            expression: `${calcState.result} %`,
+            prevArgument: resToNum(calcState.result),
+            isNeedClearEntry: true
+        });
     };
 
 
@@ -315,8 +424,8 @@ export default function Home() {
             </View>
             <View style={CalcStyle.buttonsRow}>
                 <CalcButton text={"\u00b9/\u2093"} buttonType={CalcButtonTypes.func} onPress={invClick} />
-                <CalcButton text={"x\u00b2"} buttonType={CalcButtonTypes.func} />
-                <CalcButton text={"\u221ax\u0305"} buttonType={CalcButtonTypes.func} />
+                <CalcButton text={"x\u00b2"} buttonType={CalcButtonTypes.func} onPress={sqrClick} />
+                <CalcButton text={"\u221ax\u0305"} buttonType={CalcButtonTypes.func} onPress={sqrtClick} />
                 <CalcButton text={"\u00F7"} buttonType={CalcButtonTypes.func} onPress={(face) => operButtonClick(CalcOperations.div, face)} />
             </View>
             <View style={CalcStyle.buttonsRow}>
@@ -394,38 +503,46 @@ export default function Home() {
 
         <View style={CalcStyle.keyboardLand}>
             <View style={CalcStyle.buttonsRow}>
-                <CalcButton text={"\u00b9/\u2093"} buttonType={CalcButtonTypes.func} onPress={invClick} />
-                <CalcButton text="7" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
-                <CalcButton text="8" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
-                <CalcButton text="9" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                <CalcButton text="sin" buttonType={CalcButtonTypes.func} onPress={sinClick} />
+                <CalcButton text="cos" buttonType={CalcButtonTypes.func} onPress={cosClick} />
+                <CalcButton text="tan" buttonType={CalcButtonTypes.func} onPress={tanClick} />
+                <CalcButton text="ctg" buttonType={CalcButtonTypes.func} onPress={ctgClick} />
                 <CalcButton text={"\u00F7"} buttonType={CalcButtonTypes.func} onPress={(face) => operButtonClick(CalcOperations.div, face)} />
                 <CalcButton text="C" buttonType={CalcButtonTypes.func} onPress={() => { clearResultClick() }} />
             </View>
             <View style={CalcStyle.buttonsRow}>
-                <CalcButton text={"x\u00b2"} buttonType={CalcButtonTypes.func} />
-                <CalcButton text="4" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
-                <CalcButton text="5" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
-                <CalcButton text="6" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                <CalcButton text={"\u00b9/\u2093"} buttonType={CalcButtonTypes.func} onPress={invClick} />
+                <CalcButton text="7" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                <CalcButton text="8" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                <CalcButton text="9" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
                 <CalcButton text={"\u00D7"} buttonType={CalcButtonTypes.func} onPress={(face) => operButtonClick(CalcOperations.mul, face)} />
                 <CalcButton text="CE" buttonType={CalcButtonTypes.func} />
                 
             </View>
             <View style={CalcStyle.buttonsRow}>
-                <CalcButton text={"\u221ax\u0305"} buttonType={CalcButtonTypes.func} />
-                <CalcButton text="1" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
-                <CalcButton text="2" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
-                <CalcButton text="3" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                <CalcButton text={"x\u00b2"} buttonType={CalcButtonTypes.func} onPress={sqrClick} />
+                <CalcButton text="4" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                <CalcButton text="5" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                <CalcButton text="6" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
                 <CalcButton text={minusSymbol} buttonType={CalcButtonTypes.func} onPress={(face) => operButtonClick(CalcOperations.sub, face)} />
                 <CalcButton text="⌫" buttonType={CalcButtonTypes.func} onPress={() => { backSpaceClick() }} />
 
             </View>
             <View style={CalcStyle.buttonsRow}>
-                <CalcButton text="%" buttonType={CalcButtonTypes.func} onPress={() => console.log("Press")} />
+                <CalcButton text={"\u221ax\u0305"} buttonType={CalcButtonTypes.func} onPress={sqrtClick} />
+                <CalcButton text="1" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                <CalcButton text="2" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                <CalcButton text="3" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
+                <CalcButton text={"\uFF0B"} buttonType={CalcButtonTypes.func} onPress={(face) => operButtonClick(CalcOperations.add, face)} />
+                <CalcButton text={"\uFF1D"} buttonType={CalcButtonTypes.equal} onPress={equalClick} />
+            </View>
+            <View style={CalcStyle.buttonsRow}>
+                <CalcButton text="%" buttonType={CalcButtonTypes.func} onPress={percentClick} />
                 <CalcButton text={"\u00B1"} buttonType={CalcButtonTypes.digit} onPress={pmClick} />
                 <CalcButton text="0" buttonType={CalcButtonTypes.digit} onPress={digitClick} />
                 <CalcButton text={floatSymbol} buttonType={CalcButtonTypes.digit} onPress={dotClick} />
-                <CalcButton text={"\uFF0B"} buttonType={CalcButtonTypes.func} onPress={(face) => operButtonClick(CalcOperations.add, face)} />
-                <CalcButton text={"\uFF1D"} buttonType={CalcButtonTypes.equal} onPress={equalClick} />
+                <CalcButton text="" buttonType={CalcButtonTypes.func} />
+                <CalcButton text="" buttonType={CalcButtonTypes.func} />
             </View>
         </View>
     </View>;

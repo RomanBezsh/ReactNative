@@ -63,10 +63,12 @@ export default function AppContent() {
                 </View>}
 
                 <View style={AppContentStyle.pageWidget}>
-                    {page.slug == "home" ? <Home />
-                        : page.slug == "calc" ? <Calc />
-                            : page.slug == "rate" ? <Rate />
-                                : <NotFounded />
+                    {
+                        {
+                            home: <Home />,
+                            calc: <Calc />,
+                            rate: <Rate />,
+                        }[page.slug as "home" | "calc" | "rate"] || <NotFounded />
                     }
                 </View>
 
