@@ -11,6 +11,11 @@ Date.prototype.toDotted = function():string {
     if (d.length < 2) {
         d = "0" + d;
     }
+    let m = (this.getMonth() + 1).toString();
+    if (m.length < 2) {
+        m = "0" + m;
+    }
+    return `${d}.${m}.${this.getFullYear()}`;
 }
 
 // git config --global user.email "you@example.com"
