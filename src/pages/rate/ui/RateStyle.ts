@@ -16,6 +16,15 @@ const RateStyle = StyleSheet.create({
         fontSize: 20.0,
         marginVertical: 10.0
     },
+    pageTitleRow: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between"
+    },
+    search: {
+        borderWidth: 1.0,
+        borderColor: "#888"
+    },
     rateLine: {
         display: "flex",
         flexDirection: "row"

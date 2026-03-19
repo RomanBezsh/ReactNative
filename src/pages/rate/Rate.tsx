@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View, Image, ScrollView, StyleSheet } from "react-native";
+import { Text, TouchableOpacity, View, Image, ScrollView, StyleSheet, TextInput } from "react-native";
 import HomeStyle from "./ui/RateStyle";
 import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../features/context/AppContext";
@@ -25,6 +25,8 @@ export default function Rate() {
 
     return (
         <View style={HomeStyle.pageContainer}>
+            <TextInput style={HomeStyle.search}/>
+
             <Text style={HomeStyle.pageTitle}>Курси валют НБУ</Text>
             <TouchableOpacity onPress={() => setOpen(true)}>
                 <Text>{date.toDateString()}</Text>
@@ -59,7 +61,7 @@ const Table = ({ data }: { data: Array<INbuRate> }) => {
             </View>
             {data.map((rate, index) => (
                 <View
-                    key={rate.cc}
+                    key={index}
                     style={[
                         styles.row,
                         index % 2 === 0 ? styles.evenRow : styles.oddRow,
