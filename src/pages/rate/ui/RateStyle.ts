@@ -10,6 +10,7 @@ const RateStyle = StyleSheet.create({
         width: "100%"
     },
     pageTitle: {
+        flex: 1,
         color: Color.primaryTextColor,
         fontWeight: 600,
         textAlign: "center",
@@ -19,11 +20,17 @@ const RateStyle = StyleSheet.create({
     pageTitleRow: {
         display: "flex",
         flexDirection: "row",
-        justifyContent: "space-between"
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    titleDate: {
+        color: Color.primaryTextColor,
     },
     search: {
         borderWidth: 1.0,
-        borderColor: "#888"
+        borderColor: "#888",
+        color: "#FFF",
+        flex: 1,
     },
     rateLine: {
         display: "flex",

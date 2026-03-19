@@ -11,9 +11,11 @@ import DatePicker from 'react-native-date-picker'
 export default function Rate() {
 
     const [rates, setRates] = useState<Array<INbuRate>>([]);
+    const [showRates, setShowRates] = useState<Array<INbuRate>>([]);
     const [date, setDate] = useState<Date>(new Date());
-    const [open, setOpen] = useState(false)
-
+    const [open, setOpen] = useState(false);
+    const [search, setSearch] = useState<string>("");
+    
 
     useEffect(() => {
         NbuRateApi.getCurrentRates().then(setRates);
@@ -23,16 +25,34 @@ export default function Rate() {
         NbuRateApi.getRatesByDate(date).then(setRates);
     }, [date])
 
+    useEffect(() => {
+        if (search.length > 0) {
+            setShowRates(rates.filter(r => r.cc.includes(search.toLocaleUpperCase())));
+        }
+        else {
+            setShowRates(rates);
+        }
+    }, [search, rates]);
+
     return (
         <View style={HomeStyle.pageContainer}>
-            <TextInput style={HomeStyle.search}/>
+            <View style={RateStyle.pageTitleRow}>
+                <TextInput
+                    style={HomeStyle.search}
+                    value={search}
+                    onChangeText={setSearch}
+                />
 
-            <Text style={HomeStyle.pageTitle}>Курси валют НБУ</Text>
-            <TouchableOpacity onPress={() => setOpen(true)}>
-                <Text>{date.toDateString()}</Text>
-            </TouchableOpacity>
-            
-            <Table data={rates} />
+                <Text style={HomeStyle.pageTitle}>Курси валют НБУ</Text>
+                <TouchableOpacity onPress={() => setOpen(true)}>
+                    <Text style={RateStyle.titleDate}
+
+                    >{date.toDotted()}</Text>
+                </TouchableOpacity>
+            </View>
+
+
+            <Table data={showRates} />
 
             <DatePicker
                 modal

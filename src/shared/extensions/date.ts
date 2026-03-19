@@ -1,4 +1,4 @@
-import "";
+export {};
 
 declare global {
     interface Date {
@@ -7,16 +7,6 @@ declare global {
 }
 
 Date.prototype.toDotted = function():string {
-    let d = this.getDate().toString();
-    if (d.length < 2) {
-        d = "0" + d;
-    }
-    let m = (this.getMonth() + 1).toString();
-    if (m.length < 2) {
-        m = "0" + m;
-    }
-    return `${d}.${m}.${this.getFullYear()}`;
+    return `${this.getDate().pad0()}.${(this.getMonth() + 1).toString()}.${this.getFullYear()}`;
 }
 
-// git config --global user.email "you@example.com"
-//   git config --global user.name "Your Name

@@ -5,6 +5,8 @@ import {
 } from 'react-native-safe-area-context';
 import AppContent from "./ui/AppContent";
 import React from 'react';
+import "../shared/extensions/date"
+import "../shared/extensions/number"
 
 export default function App() {
 
