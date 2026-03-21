@@ -10,6 +10,7 @@ import NotFounded from "../../pages/404/NotFounded";
 import React from "react";
 import { AppContext } from "../../features/context/AppContext";
 import Rate from "../../pages/rate/Rate";
+import Anim from "../../pages/amim/Anim";
 
 const startPage: IRoute = {
     slug: 'home',
@@ -68,7 +69,12 @@ export default function AppContent() {
                             home: <Home />,
                             calc: <Calc />,
                             rate: <Rate />,
-                        }[page.slug as "home" | "calc" | "rate"] || <NotFounded />
+                            anim: <Anim />
+                        }[page.slug as 
+                            "home" | 
+                            "calc" | 
+                            "rate" | 
+                            "anim"] || <NotFounded />
                     }
                 </View>
 
@@ -84,8 +90,12 @@ export default function AppContent() {
                             source={require("../../features/asset/rate.png")}></Image>
                     </TouchableOpacity>
 
-
                     <TouchableOpacity onPress={() => navigate({ slug: "calc" })}>
+                        <Image style={AppContentStyle.bottomBarIcon}
+                            source={require("../../features/asset/calc.png")}></Image>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => navigate({ slug: "anim" })}>
                         <Image style={AppContentStyle.bottomBarIcon}
                             source={require("../../features/asset/calc.png")}></Image>
                     </TouchableOpacity>

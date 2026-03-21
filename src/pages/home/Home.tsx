@@ -22,6 +22,11 @@ export default function Home() {
                 style={HomeStyle.navImage}/>
                 <Text style={HomeStyle.navText}>Курс валют НБУ</Text>
             </TouchableOpacity>
+            <TouchableOpacity onPress={()=> navigate({slug: 'anim'})} style={HomeStyle.navItem}>
+                <Image source={require('../../features/asset/calc.png')}
+                style={HomeStyle.navImage}/>
+                <Text style={HomeStyle.navText}>Анімації</Text>
+            </TouchableOpacity>
 
             
         </View>
