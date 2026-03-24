@@ -83,7 +83,7 @@ export default function Anim() {
         ]).start();
     };
     const scaleLongPress = () => {
-        const next = currentScale * 1.2; 
+        const next = currentScale * 1.2;
 
         Animated.timing(scaleValue, {
             toValue: next,
@@ -92,6 +92,154 @@ export default function Anim() {
         }).start();
 
         setCurrentScale(next);
+    };
+
+
+
+    // const transiValue = useRef(new Animated.Value(0.0)).current;
+
+    // const transiPress = () => {
+    //     Animated.loop(
+    //         Animated.sequence([
+    //             Animated.timing(transiValue, {
+    //                 toValue: 50,
+    //                 duration: 300,
+    //                 useNativeDriver: true,
+    //             }),
+    //             Animated.timing(transiValue, {
+    //                 toValue: -50,
+    //                 duration: 300,
+    //                 useNativeDriver: true,
+    //             }),
+    //             Animated.timing(transiValue, {
+    //                 toValue: 0,
+    //                 duration: 300,
+    //                 useNativeDriver: true,
+    //             }),
+    //         ])
+    //     ).start();
+    // };
+
+
+    const transiX = useRef(new Animated.Value(0)).current;
+    const transiY = useRef(new Animated.Value(0)).current;
+
+    const transiPress = () => {
+        Animated.loop(
+            Animated.sequence([
+                // верхня петля вправо-вгору
+                Animated.parallel([
+                    Animated.timing(transiX, {
+                        toValue: 30,
+                        duration: 500,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(transiY, {
+                        toValue: -30,
+                        duration: 500,
+                        useNativeDriver: true,
+                    }),
+                ]),
+                Animated.parallel([
+                    Animated.timing(transiX, {
+                        toValue: -30,
+                        duration: 500,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(transiY, {
+                        toValue: -30,
+                        duration: 500,
+                        useNativeDriver: true,
+                    }),
+                ]),
+                // нижня петля вправо-вниз
+                Animated.parallel([
+                    Animated.timing(transiX, {
+                        toValue: 30,
+                        duration: 500,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(transiY, {
+                        toValue: 30,
+                        duration: 500,
+                        useNativeDriver: true,
+                    }),
+                ]),
+                Animated.parallel([
+                    Animated.timing(transiX, {
+                        toValue: -30,
+                        duration: 500,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(transiY, {
+                        toValue: 30,
+                        duration: 500,
+                        useNativeDriver: true,
+                    }),
+                ]),
+                // повернення в центр
+                Animated.parallel([
+                    Animated.timing(transiX, {
+                        toValue: 0,
+                        duration: 500,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(transiY, {
+                        toValue: 0,
+                        duration: 500,
+                        useNativeDriver: true,
+                    }),
+                ]),
+            ])
+        ).start();
+    };
+
+
+
+    const rot1Value = useRef(new Animated.Value(0)).current;
+    const rot1Press = () => {
+        Animated.sequence([
+            Animated.timing(rot1Value, {
+                toValue: 45,
+                useNativeDriver: true,
+                duration: 500
+            }),
+            Animated.timing(rot1Value, {
+                toValue: -45,
+                useNativeDriver: true,
+                duration: 500
+            }),
+            Animated.timing(rot1Value, {
+                toValue: 0,
+                useNativeDriver: true,
+                duration: 500
+            }),
+        ]).start()
+    }
+
+    const fin1Value = useRef(new Animated.Value(1.0)).current;
+    const [fin1Running, setFin1Running] = useState(false);
+
+    const fin1Press = () => {
+        if (fin1Running) {
+            // Останавливаем анимацию и сбрасываем значение
+            fin1Value.stopAnimation(() => {
+                fin1Value.setValue(1.0);
+            });
+            setFin1Running(false);
+        } else {
+            // Запускаем бесконечный цикл
+            Animated.loop(
+                Animated.sequence([
+                    Animated.timing(fin1Value, {
+                        toValue: 1.5,
+                        useNativeDriver: true,
+                        duration: 900,
+                    }),
+                ])
+            ).start();
+            setFin1Running(true);
+        }
     };
 
 
@@ -109,7 +257,7 @@ export default function Anim() {
                     </Animated.View>
                 </Pressable>
 
-                <Pressable style={AnimStyle.block} onPress={blinkPress}>
+                <Pressable style={AnimStyle.anim} onPress={blinkPress}>
                     <Animated.View style={[AnimStyle.block, { opacity: blinkValue }]}>
                         <View style={AnimStyle.demo}></View>
                         <Text style={AnimStyle.subtitle}>Блимання</Text>
@@ -154,6 +302,71 @@ export default function Anim() {
 
                 </Pressable>
 
+            </View>
+
+            <View style={AnimStyle.row}>
+
+                <Pressable style={AnimStyle.anim} onPress={transiPress}>
+                    <Animated.View
+                        style={[
+                            AnimStyle.block,
+                            {
+                                transform: [
+                                    { translateX: transiX },
+                                    { translateY: transiY },
+                                    {
+                                        scale: transiX.interpolate({
+                                            inputRange: [-50, 0, 50],
+                                            outputRange: [0.75, 1, 1.33]
+                                        })
+                                    },
+                                ]
+
+                            },
+                        ]}
+                    >
+                        <View style={AnimStyle.demo}></View>
+                        <Text style={AnimStyle.subtitle}>Вісімка</Text>
+                    </Animated.View>
+                </Pressable>
+
+                <Pressable style={AnimStyle.anim} onPress={rot1Press}>
+                    <Animated.View style={[
+                        AnimStyle.block,
+                        {
+                            transform: [
+                                {
+                                    rotate: rot1Value.interpolate({
+                                        inputRange: [-90, 0, 90],
+                                        outputRange: ["-90deg", "0deg", "90deg"],
+                                    }),
+                                },
+                                {
+                                    translateX: rot1Value.interpolate({
+                                        inputRange: [-90, 90],
+                                        outputRange: [150, -150],
+                                    })
+                                }
+                            ],
+                        },
+                    ]}>
+                        <View style={
+                            AnimStyle.demo
+                        }></View>
+                        <Text style={AnimStyle.subtitle}>Оберт</Text>
+                    </Animated.View>
+                </Pressable>
+            </View>
+
+            <View style={AnimStyle.row} >
+
+
+                <Pressable style={AnimStyle.anim} onPress={fin1Press}>
+                    <Animated.View style={[AnimStyle.block, { transform: [{ scale: fin1Value }] }]}>
+                        <View style={AnimStyle.demo}></View>
+                        <Text style={AnimStyle.subtitle}>Завершення</Text>
+                    </Animated.View>
+                </Pressable>
             </View>
         </View>
     );
