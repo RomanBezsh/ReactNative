@@ -1,0 +1,22 @@
+Підписування та збірка (realease)
+1) Генеруємо ключ
+keytool -genkey -v -keystore dev_key.keystore -alias dev_key_alias -keyalg RSA -keysize 2048 -validity 10000
+
+2)
+
+
+3) Вносимо дані в налаштування
+android {
+    signingConfigs {
+        release {
+            storeFile file("dev_key.keystore")
+            storePassword 'ReactNativeP33'
+            keyAlias 'dev_key_alias'
+            keyPassword 'ReactNativeP33'
+        }
+    }
+}
+
+4) запускаємо збірку:
+переходимо до ./android 
+grawdle assembleRelease 

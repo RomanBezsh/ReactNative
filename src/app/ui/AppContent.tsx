@@ -11,6 +11,7 @@ import React from "react";
 import { AppContext } from "../../features/context/AppContext";
 import Rate from "../../pages/rate/Rate";
 import Anim from "../../pages/amim/Anim";
+import Swipe from "../../pages/swipe/Swipe";
 
 const startPage: IRoute = {
     slug: 'home',
@@ -69,12 +70,14 @@ export default function AppContent() {
                             home: <Home />,
                             calc: <Calc />,
                             rate: <Rate />,
-                            anim: <Anim />
+                            anim: <Anim />,
+                            swipe: <Swipe />
                         }[page.slug as 
                             "home" | 
                             "calc" | 
                             "rate" | 
-                            "anim"] || <NotFounded />
+                            "anim" |
+                            "swipe"] || <NotFounded />
                     }
                 </View>
 
@@ -104,7 +107,11 @@ export default function AppContent() {
                         <Image style={AppContentStyle.bottomBarIcon}
                             source={require("../../features/asset/404.png")}></Image>
                     </TouchableOpacity>
-
+                    
+                    <TouchableOpacity onPress={() => navigate({ slug: "swipe" })}>
+                        <Image style={AppContentStyle.bottomBarIcon}
+                            source={require("../../features/asset/swipe.png")}></Image>
+                    </TouchableOpacity>
 
                 </View>}
             </View>

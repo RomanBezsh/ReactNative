@@ -222,13 +222,11 @@ export default function Anim() {
 
     const fin1Press = () => {
         if (fin1Running) {
-            // Останавливаем анимацию и сбрасываем значение
             fin1Value.stopAnimation(() => {
                 fin1Value.setValue(1.0);
             });
             setFin1Running(false);
         } else {
-            // Запускаем бесконечный цикл
             Animated.loop(
                 Animated.sequence([
                     Animated.timing(fin1Value, {
