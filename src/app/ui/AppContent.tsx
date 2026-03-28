@@ -102,11 +102,6 @@ export default function AppContent() {
                         <Image style={AppContentStyle.bottomBarIcon}
                             source={require("../../features/asset/calc.png")}></Image>
                     </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => navigate({ slug: "*" })}>
-                        <Image style={AppContentStyle.bottomBarIcon}
-                            source={require("../../features/asset/404.png")}></Image>
-                    </TouchableOpacity>
                     
                     <TouchableOpacity onPress={() => navigate({ slug: "swipe" })}>
                         <Image style={AppContentStyle.bottomBarIcon}
