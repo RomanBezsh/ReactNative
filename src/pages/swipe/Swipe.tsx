@@ -1,7 +1,8 @@
 import { GestureResponderEvent, Text, TouchableWithoutFeedback, useWindowDimensions, View } from "react-native";
 import SwipeStyle from "./ui/SwipeStyle";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import React from "react";
+import { Animated } from "react-native";
 
 let eventBegin: GestureResponderEvent | null = null;
 
@@ -17,6 +18,8 @@ export default function Swipe() {
     const [field, setField] = useState<Array<number>>(
         [...Array(16).keys()].sort(() => Math.random() - 0.5)
     );
+
+    const translateX = useRef(new Animated.Value(0)).current;
 
     const onSwipeRight = () => {
         const emptyTileIndex = field.findIndex(i => i === 0);
@@ -41,15 +44,27 @@ export default function Swipe() {
         const emptyTileIndex = field.findIndex(i => i === 0);
 
         if (emptyTileIndex % 4 !== 3) {
-            const newField = [...field];
-            const rightTileIndex = emptyTileIndex + 1;
+            Animated.timing(translateX, {
+                toValue: -20,
+                duration: 150,
+                useNativeDriver: true,
+            }).start(() => {
+                const newField = [...field];
+                const rightTileIndex = emptyTileIndex + 1;
 
-            [newField[emptyTileIndex], newField[rightTileIndex]] = [
-                newField[rightTileIndex],
-                newField[emptyTileIndex]
-            ];
+                [newField[emptyTileIndex], newField[rightTileIndex]] = [
+                    newField[rightTileIndex],
+                    newField[emptyTileIndex]
+                ];
 
-            setField(newField);
+                setField(newField);
+
+                Animated.timing(translateX, {
+                    toValue: 0,
+                    duration: 0,
+                    useNativeDriver: true,
+                }).start();
+            });
         } else {
             setText("Move not allowed");
         }
@@ -121,7 +136,7 @@ export default function Swipe() {
                 // } else if (lenX / dt < minSwipeVelocity) {
                 //     result += "too slow";
                 // } else 
-                    
+
                 if (dx < 0) {
                     result += "left";
                     onSwipeLeft();
@@ -137,7 +152,7 @@ export default function Swipe() {
                 // } else if (lenY / dt < minSwipeVelocity) {
                 //     result += "too slow";
                 // } 
-                 if (dy < 0) {
+                if (dy < 0) {
                     result += "up";
                     onSwipeUp();
                 } else {
@@ -155,7 +170,16 @@ export default function Swipe() {
         <View style={[SwipeStyle.pageContainer, { flexDirection: width < height ? "column" : "row", alignItems: "center" }]}>
             <Text>Swipe: {text}</Text>
             <TouchableWithoutFeedback onPressIn={onGestureBegin} onPressOut={onGestureEnd}>
-                <View style={[SwipeStyle.gameField, { width: fieldSize, height: fieldSize }]}>
+                <Animated.View
+                    style={[
+                        SwipeStyle.gameField,
+                        {
+                            width: fieldSize,
+                            height: fieldSize,
+                            transform: [{ translateX }]
+                        }
+                    ]}
+                >
                     {field.map((i) => {
                         return (
                             <View key={i} style={[SwipeStyle.tileContainer, { width: tileSize, height: tileSize }]}>
@@ -167,7 +191,7 @@ export default function Swipe() {
                             </View>
                         );
                     })}
-                </View>
+                </Animated.View>
             </TouchableWithoutFeedback>
         </View>
     );

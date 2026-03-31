@@ -15,7 +15,7 @@ export default function Rate() {
     const [date, setDate] = useState<Date>(new Date());
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState<string>("");
-    
+
 
     useEffect(() => {
         NbuRateApi.getCurrentRates().then(setRates);
@@ -26,10 +26,21 @@ export default function Rate() {
     }, [date])
 
     useEffect(() => {
-        if (search.length > 0) {
-            setShowRates(rates.filter(r => r.cc.includes(search.toLocaleUpperCase())));
-        }
-        else {
+        const normalizedSearch = search.trim().toLowerCase();
+
+        if (normalizedSearch.length > 0) {
+            setShowRates(
+                rates.filter((r) => {
+                    const currencyCode = r.cc.toLowerCase();
+                    const currencyName = r.txt.toLowerCase();
+
+                    return (
+                        currencyCode.includes(normalizedSearch) ||
+                        currencyName.includes(normalizedSearch)
+                    );
+                })
+            );
+        } else {
             setShowRates(rates);
         }
     }, [search, rates]);

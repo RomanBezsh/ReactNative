@@ -1,22 +1,58 @@
-Підписування та збірка (realease)
-1) Генеруємо ключ
+React Native: встановлення та налаштування
+Загальна ідея React Native (RN) - універсальний інструмент створення застосунків під різні платформи
+(Android, iOS, Windows, MacOS, Linux, Browser)
+Принцип роботи - транскодер, переведення універсального коду JS/RN до native-коду конкретної
+платформи; для роботи RN необхідні також інструменти даної платформи.
+Головна мета - Android - ОС побудована на С та Java
+Процес компіляції RN: TS/TSX -> Java (JDK) -> Android SDK -> APK -> Встановлення на пристрій
+Інструментарій:      VS Code     JDK-17      Android Studio          Emulator (як частина Android Studio)
+                                         Бажано вказати для SDK      або окрема програма-емулятор BlueStacks
+                                          шлях C:/Android/SDK
+	                                 або створитит системну змінну 
+                                         ANDROID_HOME з шляхом до SDK: C:/users/USER/AppData/Local/Android/SDK
+
+Ресурси:
+https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
+https://developer.android.com/studio
+
+Попередні налаштування:
+включена віртуалізація у BIOS
+
+--------------------------
+
+Підписування та збірка (release)
+1) генеруємо ключ-підпис 
 keytool -genkey -v -keystore dev_key.keystore -alias dev_key_alias -keyalg RSA -keysize 2048 -validity 10000
 
-2)
+&"C:\Program Files\Java\jdk-17\bin\keytool" ...
 
+2) переміщуємо згенерований ключ (файл dev_key.keystore) до директорії android/app 
 
-3) Вносимо дані в налаштування
-android {
-    signingConfigs {
+3) вносимо дані до налаштувань збиральника  android\app\build.gradle
+(ReactNativeP33 - пароль при створенні ключа)
+...
+android{
+    ...
+    signingConfigs{
+        ...
         release {
-            storeFile file("dev_key.keystore")
+            storeFile file('dev_key.keystore')
             storePassword 'ReactNativeP33'
             keyAlias 'dev_key_alias'
             keyPassword 'ReactNativeP33'
         }
     }
+    ...
+    buildTypes {
+        ...
+        release {
+            ...
+            signingConfig signingConfigs.release   <-- додати або змінити з .debug
+        }
 }
 
 4) запускаємо збірку:
-переходимо до ./android 
-grawdle assembleRelease 
+переходимо до ./android
+gradlew assembleRelease   або    ./gradlew assembleRelease
+
+5) знаходимо результат у android/app/build/outputs/apk/app-release.apk
